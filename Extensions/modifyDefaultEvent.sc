@@ -2,6 +2,8 @@
 
 	*modifyDefaultEvent { var p;
 
+		~streamNum = 0;
+
 		p = Event.default.parent;
 
 		p.note = #{ //add degContour to implement contour logic
@@ -19,6 +21,7 @@
 		p.drag = 1;
 		p.bass = 0;
 		p.octave = 4;
+		p.snum = 0; //stream number
 
 		p.wrap = #{ arg a, deg, oct = 7;
 			deg.wrapAt(a) + (oct*floor(a/deg.size))};
@@ -33,7 +36,51 @@
 			(~diaOctave*floor(~contourCorr.value/~arp.size)) + ~bass };
 
 		p.contourCorr = #{ floor( ~firstWrap.value * ~drag ) + ~contour };
+
+		p.playNormal = #{
+			var tempo, server;
+
+			~finish.value;
+
+			server = ~server ?? { Server.default };
+
+			tempo = ~tempo;
+			if (tempo.notNil) {
+				thisThread.clock.tempo = tempo;
+			};
+			// ~isRest may be nil - force Boolean behavior
+			if(~isRest != true) { ~eventTypes[~type].value(server) };
+		};
+
+		p.playPost = #{ var n;
+			//do the actions after all the note work
+			n = NetAddr("tamats.com", 4344);
+			n.sendMsg("/midi", ~note.value, ~snum);
+
+			~note.value.post; ' '.post; ~snum.postln;
+		};
+
+		p.play = { p.playNormal.value();
+			p.playPost.value();
+		};
 	}
 
 }
+
+//+ Pbind {
+
+/*	*new { arg ... pairs;
+		if (pairs.size.odd, { Error("Pbind should have even number of args.\n").throw; });
+		if( topEnvironment[\snum].isNil ) { topEnvironment[\snum]=0 } { topEnvironment[\snum]=topEnvironment[\snum]+1 };
+		^super.newCopyArgs(\snum, topEnvironment[\snum], pairs)
+	}*/
+
+//}
+
+/*PbindSuper {
+
+	*new { arg ... pairs;
+		^super.new( pairs ); }
+
+}*/
 

@@ -1,7 +1,7 @@
 + Pattern {
 
 	//gkc: make a "play" that tracks the playing streams in ~track
-	track { 
+	track {
 		if( ~track.isNil, {~track=List()} ); //init ~track
 		~p = this.play( TempoClock.default, quant:1 );
 		~track.add( ~p );
@@ -9,6 +9,8 @@
 		//~v = EZPopUpMenu();
 		//~v.addItem( \play, {~p.play(quant:1)} );
 		//~v.addItem( \stop, {~p.stop} );
+
+
 	}
 
 	//this is for looking up keys in event patterns
@@ -23,7 +25,7 @@
 	}
 
 	//and for jamshark's Paccum
-	accum { 
+	accum {
 		arg startArg=0;
 		^Paccum( start: startArg, step: this );
 	}
@@ -65,9 +67,20 @@
 	rpani { ^this.pan( 1.0.rand2 ) }
 	rpan { ^this.pan( Pwhite(-1,1) ) }
 
-	bindf { 
+	bindf {
 		arg estream, key;
 		^Pbindf( estream, key, this );
 	}
 
-}                                           
+	//try to count streams automatically
+	//classvar streamCount;
+
+	*initClass {
+		StreamCounter.initClass;
+	}
+
+	//replace the play method
+	go { arg quant = 1;
+		^Pbindf( this, \snum, StreamCounter.counter.value ).play(quant:quant);
+	}
+}
