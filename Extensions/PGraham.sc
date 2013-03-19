@@ -31,3 +31,8 @@ Pcontour : Pbinop {
 
 Parp : Pcontour {}
 
+Ploop : Pmono {
+
+	*new { arg ... args;
+		^ Pmono(\looper, pairs: [\group, Group.after(1), \buf, Buffer.aok, \amp, 0.5]++args) }
+}
