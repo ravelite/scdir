@@ -1,4 +1,5 @@
 s.boot;
 
-Pattern.modifyDefaultEvent()
+Pattern.modifyDefaultEvent();
 
+StartUp.add { Sculos.start(this) };
