@@ -83,4 +83,9 @@
 	go { arg quant = 1;
 		^Pbindf( this, \snum, StreamCounter.counter.value ).play(quant:quant);
 	}
+
+	//fold indices over a target
+	tri { arg target=5;
+		^this.collect{|x| (0..target).foldAt(x)};
+	}
 }
