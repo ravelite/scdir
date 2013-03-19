@@ -54,14 +54,15 @@
 
 		p.playPost = #{ var n;
 			//do the actions after all the note work
-			n = NetAddr("tamats.com", 4344);
+			//n = NetAddr("tamats.com", 4344);
+			n = NetAddr("localhost", 3333);
 			n.sendMsg("/midi", ~note.value, ~snum);
 
-			~note.value.post; ' '.post; ~snum.postln;
+			//~note.value.post; ' '.post; ~snum.postln;
 		};
 
-		p.play = { p.playNormal.value();
-			p.playPost.value();
+		p.play = #{ ~playNormal.value();
+			~playPost.value();
 		};
 	}
 
@@ -83,4 +84,20 @@
 		^super.new( pairs ); }
 
 }*/
+
++ Array {
+
+	pseq { ^Pseq( this, inf ) }
+
+}
+
++ Buffer {
+
+	*adequate { var s,b; s = Server.default;
+		b = Buffer.alloc( s, s.sampleRate * 5, 2 );
+	    ^b }
+
+	*aok { ^Buffer.adequate }
+
+}
 
